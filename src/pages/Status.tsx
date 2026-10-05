@@ -33,7 +33,7 @@ export function Status() {
 
   return (
     <main style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>Health Check do Backend</h1>
+      <h1>status check da api</h1>
       <pre style={{ background: "#f3f4f6", padding: "1rem", borderRadius: "8px" }}>
         {JSON.stringify(status, null, 2)}
       </pre>

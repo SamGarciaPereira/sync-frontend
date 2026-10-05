@@ -92,7 +92,7 @@ export function Users() {
 
   return (
     <main style={{ padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>Usuários Registrados</h1>
+      <h1>usuários registrados</h1>
 
       <form
         onSubmit={handleSubmit}
