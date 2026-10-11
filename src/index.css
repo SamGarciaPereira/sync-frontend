@@ -1,3 +1,52 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/*  sync. design tokens (green theme) — exposed as Tailwind utilities  */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-cream: #f3f2eb;
+  --color-cream-deep: #eceadf;
+  --color-surface: #faf9f4;
+  --color-surface-border: #e6e4da;
+  --color-forest: #4f6f52;
+  --color-forest-strong: #44623f;
+  --color-forest-dark: #2b3a2e;
+  --color-forest-darker: #1f2a20;
+  --color-heading: #334a38;
+  --color-sage: #e3eadd;
+  --color-sage-deep: #d7e2cf;
+  --color-sage-icon: #5b7a5f;
+  --color-muted: #6b7065;
+  --color-faint: #9aa093;
+  --color-danger: #cd4a3e;
+
+  --font-sans: "Poppins", system-ui, "Segoe UI", Roboto, sans-serif;
+
+  --radius-card: 1.25rem;
+
+  --shadow-card: 0 1px 2px rgba(38, 52, 38, 0.04), 0 6px 20px -12px rgba(38, 52, 38, 0.18);
+  --shadow-float: 0 10px 30px -12px rgba(38, 52, 38, 0.45);
+}
+
+/* The new app owns a light, cream canvas. */
+.app-shell {
+  color-scheme: light;
+  background: var(--color-cream);
+  color: var(--color-muted);
+}
+
+/* Keep the left clock as the only visible affordance on time fields;
+   the native picker stays clickable but invisible on the right. */
+.app-shell input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Legacy Vite template styles — kept ONLY for the demo pages        */
+/*  (Home / Users / Status), scoped under .demo-shell so they don't   */
+/*  leak into the new app.                                            */
+/* ------------------------------------------------------------------ */
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -5,107 +54,74 @@
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans-legacy: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
+/* Full-width neutral root so the app layout can span the viewport. */
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Reproduces the old centered/bordered template column for the demo. */
+.demo-shell {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--sans-legacy);
+  font-size: 18px;
+  line-height: 145%;
+  color: var(--text);
+}
+
+.demo-shell h1,
+.demo-shell h2 {
+  font-family: var(--sans-legacy);
   font-weight: 500;
   color: var(--text-h);
 }
-
-h1 {
+.demo-shell h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
 }
-h2 {
+.demo-shell h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
 }
-p {
-  margin: 0;
-}
-
-code,
-.counter {
+.demo-shell code {
   font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
   font-size: 15px;
   line-height: 135%;
   padding: 4px 8px;
+  border-radius: 4px;
   background: var(--code-bg);
+  color: var(--text-h);
+}
+
+@media (max-width: 1024px) {
+  .demo-shell {
+    font-size: 16px;
+  }
+  .demo-shell h1 {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+  .demo-shell h2 {
+    font-size: 20px;
+  }
 }
