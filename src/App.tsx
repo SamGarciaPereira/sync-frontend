@@ -7,6 +7,8 @@ import { NotFound } from "./pages/NotFound";
 import { AppLayout } from "./app/layout/AppLayout";
 import { Inicio } from "./app/pages/Inicio";
 import { MeusMedicamentos } from "./app/pages/MeusMedicamentos";
+import { DetalheMedicamento } from "./app/pages/DetalheMedicamento";
+import { EditarMedicamento } from "./app/pages/EditarMedicamento";
 import { CadastrarMedicacao } from "./app/pages/CadastrarMedicacao";
 import { QuandoTomar } from "./app/pages/QuandoTomar";
 import { Lembretes } from "./app/pages/Lembretes";
@@ -27,6 +29,8 @@ export default function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Inicio />} />
           <Route path="medicamentos" element={<MeusMedicamentos />} />
+          <Route path="medicamentos/:id" element={<DetalheMedicamento />} />
+          <Route path="medicamentos/:id/editar" element={<EditarMedicamento />} />
           <Route path="cadastrar" element={<CadastrarMedicacao />} />
           <Route path="cadastrar/quando-tomar" element={<QuandoTomar />} />
           <Route path="lembretes" element={<Lembretes />} />
