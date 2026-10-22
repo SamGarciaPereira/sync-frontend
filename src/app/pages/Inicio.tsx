@@ -1,22 +1,40 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarClock, ChevronRight, ListChecks, Pill } from "lucide-react";
 import { Card } from "../components/Card";
 import { IconBadge } from "../components/IconBadge";
-import { medications } from "../data/medications";
+import { WEEK_DAYS, findNextDose } from "../lib/medicationOptions";
+import { medicationService, type Medication } from "../../services/medications";
+import { CURRENT_USER_ID } from "../../services/session";
 
-function nextDose() {
-  const now = new Date();
-  const current = `${String(now.getHours()).padStart(2, "0")}:${String(
-    now.getMinutes(),
-  ).padStart(2, "0")}`;
-  const doses = medications
-    .flatMap((m) => m.times.map((time) => ({ time, name: m.name })))
-    .sort((a, b) => a.time.localeCompare(b.time));
-  return doses.find((d) => d.time >= current) ?? doses[0];
+function dayLabel(dayOffset: number): string {
+  if (dayOffset === 0) return "hoje";
+  if (dayOffset === 1) return "amanhã";
+  const weekday = (new Date().getDay() + dayOffset) % 7;
+  return WEEK_DAYS.find((d) => d.value === weekday)?.label ?? "";
 }
 
 export function Inicio() {
-  const upcoming = nextDose();
+  const [medications, setMedications] = useState<Medication[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    medicationService
+      .list(CURRENT_USER_ID)
+      .then((data) => {
+        if (!ignore) setMedications(data);
+      })
+      .catch(() => {
+        if (!ignore) setFailed(true);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const upcoming = medications ? findNextDose(medications) : null;
+  const placeholder = failed ? "Não foi possível carregar." : "Carregando...";
 
   return (
     <div className="space-y-6">
@@ -29,14 +47,24 @@ export function Inicio() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card icon={Pill} title="Medicamentos">
-          <p className="text-3xl font-bold text-heading">{medications.length}</p>
-          <p className="text-sm text-muted">cadastrados</p>
+          {medications ? (
+            <>
+              <p className="text-3xl font-bold text-heading">{medications.length}</p>
+              <p className="text-sm text-muted">cadastrados</p>
+            </>
+          ) : (
+            <p className="text-sm text-muted">{placeholder}</p>
+          )}
         </Card>
         <Card icon={CalendarClock} title="Próxima dose">
-          {upcoming ? (
+          {!medications ? (
+            <p className="text-sm text-muted">{placeholder}</p>
+          ) : upcoming ? (
             <>
               <p className="text-3xl font-bold text-heading">{upcoming.time}</p>
-              <p className="text-sm text-muted">{upcoming.name}</p>
+              <p className="text-sm text-muted">
+                {upcoming.name} · {dayLabel(upcoming.dayOffset)}
+              </p>
             </>
           ) : (
             <p className="text-sm text-muted">Nenhuma dose programada.</p>
