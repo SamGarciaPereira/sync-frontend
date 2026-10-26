@@ -23,7 +23,6 @@ import {
   formatDose,
 } from "../lib/medicationOptions";
 import { medicationService, type Medication } from "../../services/medications";
-import { CURRENT_USER_ID } from "../../services/session";
 import { getApiErrorMessage } from "../../services/errors";
 
 type Status = "loading" | "ready" | "error";
@@ -42,7 +41,7 @@ export function MeusMedicamentos() {
     let ignore = false;
 
     medicationService
-      .list(CURRENT_USER_ID)
+      .list()
       .then((data) => {
         if (ignore) return;
         setItems(data);

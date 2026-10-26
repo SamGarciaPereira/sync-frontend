@@ -74,8 +74,8 @@ export interface ScheduleInput {
   daysOfWeek?: number[];
 }
 
+/** The owner is always the logged-in user (taken from the session by the API). */
 export interface MedicationCreateInput {
-  userId: number;
   catalogId?: number;
   customName?: string;
   nickname?: string;
@@ -89,7 +89,7 @@ export interface MedicationCreateInput {
   schedules?: ScheduleInput[];
 }
 
-export type MedicationUpdateInput = Partial<Omit<MedicationCreateInput, "userId">> & {
+export type MedicationUpdateInput = Partial<MedicationCreateInput> & {
   isActive?: boolean;
 };
 
@@ -102,8 +102,9 @@ export const medicationService = {
     return res.data;
   },
 
-  async list(userId: number) {
-    const res = await api.get<Medication[]>("/medications", { params: { userId } });
+  /** Active medications of the logged-in user. */
+  async list() {
+    const res = await api.get<Medication[]>("/medications");
     return res.data;
   },
 
