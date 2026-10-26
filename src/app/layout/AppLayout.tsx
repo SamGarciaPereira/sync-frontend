@@ -1,9 +1,9 @@
-import { CircleUser } from "lucide-react";
 import { Outlet } from "react-router-dom";
 import { Waves } from "../components/Waves";
 import { Sidebar } from "./Sidebar";
 import { MobileHeader } from "./MobileHeader";
 import { BottomNav } from "./BottomNav";
+import { ProfileMenu } from "./ProfileMenu";
 
 /** Responsive shell: sidebar on desktop, header + bottom tabs on mobile. */
 export function AppLayout() {
@@ -15,15 +15,11 @@ export function AppLayout() {
         <MobileHeader />
 
         {/* Desktop top band with profile avatar */}
-        <div className="relative hidden lg:block">
+        <div className="relative z-30 hidden lg:block">
           <div className="h-20 rounded-bl-[2.5rem] bg-linear-to-r from-sage/50 via-cream-deep to-cream-deep" />
-          <button
-            type="button"
-            aria-label="Perfil"
-            className="absolute right-8 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-forest shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest/40"
-          >
-            <CircleUser size={24} />
-          </button>
+          <div className="absolute right-8 top-1/2 z-30 -translate-y-1/2">
+            <ProfileMenu variant="desktop" />
+          </div>
         </div>
 
         <main className="relative flex-1 overflow-hidden">
