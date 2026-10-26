@@ -61,14 +61,25 @@ As funcionalidades abaixo vêm das 30 user stories do documento da equipe. Hoje 
 
 ## Estado atual
 
-Base do frontend integrada ao backend:
+Frontend integrado ao backend, com login. As telas do app ficam em `/app` e exigem estar logado; sem sessão, o usuário é levado para `/entrar` (e volta para a página que tentou abrir).
 
 | Rota | Página | Descrição |
 | --- | --- | --- |
-| `/` | Home | Página inicial com atalhos |
-| `/users` | Users | Lista (`GET /users`) e cadastra (`POST /users`) usuários |
-| `/status` | Status | Health check do backend (`GET /status`) |
+| `/` | Boas-vindas | Apresentação do sync. com "Entrar" e "Cadastre-se" |
+| `/entrar` | Entrar | Login com e-mail e senha (`POST /sessions`) |
+| `/cadastro` | Cadastro | Nome, data de nascimento, e-mail e senha (`POST /users`); entra logado em seguida |
+| `/app` | Início 🔒 | Total de medicamentos e próxima dose |
+| `/app/medicamentos` | Meus medicamentos 🔒 | Lista, busca e remoção |
+| `/app/medicamentos/:id` | Detalhe 🔒 | Dose, estoque, horários e instruções |
+| `/app/medicamentos/:id/editar` | Editar 🔒 | Edição do medicamento (`PATCH`) |
+| `/app/cadastrar` → `/app/cadastrar/quando-tomar` | Cadastrar medicação 🔒 | Catálogo ou cadastro manual, depois horários |
+| `/app/lembretes`, `/app/configuracoes` | Em breve 🔒 | Telas ainda em construção |
+| `/demo`, `/users`, `/status` | Demo | Páginas de demonstração do template |
 | `*` | NotFound | Página 404 |
+
+🔒 Exige login. O avatar no topo mostra o usuário logado e a opção **Sair**.
+
+> A sessão é um cookie `httpOnly` criado pela API. Por isso a API precisa liberar o endereço do front em `CORS_ORIGIN` (padrão `http://localhost:5173`).
 
 ---
 
