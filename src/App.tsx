@@ -13,14 +13,18 @@ import { CadastrarMedicacao } from "./app/pages/CadastrarMedicacao";
 import { QuandoTomar } from "./app/pages/QuandoTomar";
 import { Lembretes } from "./app/pages/Lembretes";
 import { Configuracoes } from "./app/pages/Configuracoes";
+import { BoasVindas } from "./app/pages/BoasVindas";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Demo original do template (mantida intacta) */}
+        {/* Apresentação do sync. */}
+        <Route path="/" element={<BoasVindas />} />
+
+        {/* Demo original do template (mantida intacta, agora em /demo) */}
         <Route element={<DemoLayout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/demo" element={<Home />} />
           <Route path="/users" element={<Users />} />
           <Route path="/status" element={<Status />} />
         </Route>
