@@ -17,7 +17,6 @@ import {
   loadDraft,
 } from "../lib/medicationOptions";
 import { medicationService } from "../../services/medications";
-import { CURRENT_USER_ID } from "../../services/session";
 import { getApiErrorMessage } from "../../services/errors";
 
 type Continuous = "sim" | "nao";
@@ -75,7 +74,6 @@ export function QuandoTomar() {
     setSaving(true);
     try {
       await medicationService.create({
-        userId: CURRENT_USER_ID,
         catalogId: draft.catalogItem?.id,
         customName: draft.catalogItem ? undefined : draft.name,
         form: draft.form,

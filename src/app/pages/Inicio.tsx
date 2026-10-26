@@ -5,7 +5,7 @@ import { Card } from "../components/Card";
 import { IconBadge } from "../components/IconBadge";
 import { WEEK_DAYS, findNextDose } from "../lib/medicationOptions";
 import { medicationService, type Medication } from "../../services/medications";
-import { CURRENT_USER_ID } from "../../services/session";
+import { useAuth } from "../auth/authContext";
 
 function dayLabel(dayOffset: number): string {
   if (dayOffset === 0) return "hoje";
@@ -15,13 +15,15 @@ function dayLabel(dayOffset: number): string {
 }
 
 export function Inicio() {
+  const { user } = useAuth();
+  const firstName = user?.name.trim().split(/\s+/)[0];
   const [medications, setMedications] = useState<Medication[] | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let ignore = false;
     medicationService
-      .list(CURRENT_USER_ID)
+      .list()
       .then((data) => {
         if (!ignore) setMedications(data);
       })
@@ -40,7 +42,7 @@ export function Inicio() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-bold tracking-tight text-heading sm:text-3xl">
-          Olá! 👋
+          {firstName ? `Olá, ${firstName}!` : "Olá!"} 👋
         </h1>
         <p className="mt-1.5 text-muted">Acompanhe seus medicamentos e as doses de hoje.</p>
       </header>
