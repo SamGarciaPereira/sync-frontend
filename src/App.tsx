@@ -16,15 +16,18 @@ import { Configuracoes } from "./app/pages/Configuracoes";
 import { BoasVindas } from "./app/pages/BoasVindas";
 import { Entrar } from "./app/pages/Entrar";
 import { Cadastro } from "./app/pages/Cadastro";
+import { GuestOnly, RequireAuth } from "./app/auth/RouteGuards";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Apresentação do sync. */}
-        <Route path="/" element={<BoasVindas />} />
-        <Route path="/entrar" element={<Entrar />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        {/* Apresentação, login e cadastro (quem já está logado vai para /app) */}
+        <Route element={<GuestOnly />}>
+          <Route path="/" element={<BoasVindas />} />
+          <Route path="/entrar" element={<Entrar />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+        </Route>
 
         {/* Demo original do template (mantida intacta, agora em /demo) */}
         <Route element={<DemoLayout />}>
@@ -33,16 +36,18 @@ export default function App() {
           <Route path="/status" element={<Status />} />
         </Route>
 
-        {/* App de medicamentos "sync." */}
-        <Route path="/app" element={<AppLayout />}>
-          <Route index element={<Inicio />} />
-          <Route path="medicamentos" element={<MeusMedicamentos />} />
-          <Route path="medicamentos/:id" element={<DetalheMedicamento />} />
-          <Route path="medicamentos/:id/editar" element={<EditarMedicamento />} />
-          <Route path="cadastrar" element={<CadastrarMedicacao />} />
-          <Route path="cadastrar/quando-tomar" element={<QuandoTomar />} />
-          <Route path="lembretes" element={<Lembretes />} />
-          <Route path="configuracoes" element={<Configuracoes />} />
+        {/* App de medicamentos "sync." (exige login) */}
+        <Route element={<RequireAuth />}>
+          <Route path="/app" element={<AppLayout />}>
+            <Route index element={<Inicio />} />
+            <Route path="medicamentos" element={<MeusMedicamentos />} />
+            <Route path="medicamentos/:id" element={<DetalheMedicamento />} />
+            <Route path="medicamentos/:id/editar" element={<EditarMedicamento />} />
+            <Route path="cadastrar" element={<CadastrarMedicacao />} />
+            <Route path="cadastrar/quando-tomar" element={<QuandoTomar />} />
+            <Route path="lembretes" element={<Lembretes />} />
+            <Route path="configuracoes" element={<Configuracoes />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFound />} />
