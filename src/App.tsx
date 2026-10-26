@@ -15,6 +15,7 @@ import { Lembretes } from "./app/pages/Lembretes";
 import { Configuracoes } from "./app/pages/Configuracoes";
 import { BoasVindas } from "./app/pages/BoasVindas";
 import { Entrar } from "./app/pages/Entrar";
+import { Cadastro } from "./app/pages/Cadastro";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         {/* Apresentação do sync. */}
         <Route path="/" element={<BoasVindas />} />
         <Route path="/entrar" element={<Entrar />} />
+        <Route path="/cadastro" element={<Cadastro />} />
 
         {/* Demo original do template (mantida intacta, agora em /demo) */}
         <Route element={<DemoLayout />}>
