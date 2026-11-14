@@ -92,7 +92,7 @@ export function Inicio() {
           to="/app/historico"
           icon={History}
           title="Histórico"
-          description="Doses tomadas, alarmes e medicamentos terminados."
+          description="Doses tomadas, alarmes e relatório em PDF."
         />
       </section>
     </div>

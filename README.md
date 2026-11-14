@@ -73,7 +73,7 @@ Frontend integrado ao backend, com login. As telas do app ficam em `/app` e exig
 | `/app/medicamentos/:id` | Detalhe 🔒 | Dose, estoque, horários e instruções |
 | `/app/medicamentos/:id/editar` | Editar 🔒 | Edição do medicamento (`PATCH`) |
 | `/app/cadastrar` → `/app/cadastrar/quando-tomar` | Cadastrar medicação 🔒 | Catálogo ou cadastro manual, depois horários |
-| `/app/historico` | Histórico 🔒 | Última dose, último alarme e eventos por filtro (`GET /history`); SOS aguardando o botão |
+| `/app/historico` | Histórico 🔒 | Última dose, último alarme, eventos por filtro e relatório em PDF (`GET /history`, `GET /history/report`); SOS aguardando o botão |
 | `/app/lembretes`, `/app/configuracoes` | Em breve 🔒 | Telas ainda em construção |
 | `/demo`, `/users`, `/status` | Demo | Páginas de demonstração do template |
 | `*` | NotFound | Página 404 |
