@@ -12,10 +12,13 @@ import {
 } from "lucide-react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
+import { Chip } from "../components/Chip";
 import { IconBadge } from "../components/IconBadge";
+import { SelectField } from "../components/SelectField";
 import {
   historyService,
   type HistoryEvent,
+  type HistoryFilter,
   type HistorySummary,
   type HistorySummaryItem,
 } from "../../services/history";
@@ -24,6 +27,64 @@ import { getApiErrorMessage } from "../../services/errors";
 type Status = "loading" | "ready" | "error";
 
 const PAGE_SIZE = 30;
+
+const FILTERS: { value: HistoryFilter; label: string }[] = [
+  { value: "all", label: "Tudo" },
+  { value: "doses", label: "Doses tomadas" },
+  { value: "alarms", label: "Alarmes" },
+  { value: "sos", label: "SOS" },
+  { value: "finished", label: "Medicamentos terminados" },
+];
+
+type Period = "7" | "30" | "90" | "all";
+
+const PERIODS: { value: Period; label: string }[] = [
+  { value: "7", label: "Últimos 7 dias" },
+  { value: "30", label: "Últimos 30 dias" },
+  { value: "90", label: "Últimos 90 dias" },
+  { value: "all", label: "Todo o período" },
+];
+
+/** Start of the selected period (midnight, N days ago); undefined = everything. */
+function periodStart(period: Period): Date | undefined {
+  if (period === "all") return undefined;
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - Number(period));
+  return start;
+}
+
+/** Empty-state text for each filter. */
+function emptyState(filter: HistoryFilter): { title: string; text: string } {
+  switch (filter) {
+    case "sos":
+      // TODO(SOS): trocar pelo texto padrão quando o botão SOS estiver pronto.
+      return {
+        title: "Botão SOS em desenvolvimento",
+        text: "As ligações de emergência vão aparecer aqui quando o botão SOS estiver disponível.",
+      };
+    case "finished":
+      return {
+        title: "Nenhum medicamento terminado",
+        text: "Tratamentos concluídos e medicamentos removidos neste período aparecem aqui.",
+      };
+    case "doses":
+      return {
+        title: "Nenhuma dose registrada",
+        text: "As doses confirmadas com “Tomei” neste período aparecem aqui.",
+      };
+    case "alarms":
+      return {
+        title: "Nenhum alarme registrado",
+        text: "Os lembretes disparados neste período aparecem aqui.",
+      };
+    default:
+      return {
+        title: "Nenhum registro por aqui",
+        text: "As doses confirmadas e os alarmes deste período vão aparecer nesta lista.",
+      };
+  }
+}
 
 /** "Hoje às 08:02", "Ontem às 20:00" ou "12/11/2026 às 08:00". */
 function formatWhen(iso: string): string {
@@ -63,6 +124,8 @@ function describeEvent(event: HistoryEvent): { icon: LucideIcon; title: string; 
 }
 
 export function Historico() {
+  const [filter, setFilter] = useState<HistoryFilter>("all");
+  const [period, setPeriod] = useState<Period>("30");
   const [summary, setSummary] = useState<HistorySummary | null>(null);
   const [events, setEvents] = useState<HistoryEvent[]>([]);
   const [hasMore, setHasMore] = useState(false);
@@ -75,7 +138,7 @@ export function Historico() {
     let ignore = false;
 
     historyService
-      .list({ type: "all", limit: PAGE_SIZE })
+      .list({ type: filter, from: periodStart(period), limit: PAGE_SIZE })
       .then((page) => {
         if (ignore) return;
         setSummary(page.summary);
@@ -92,7 +155,20 @@ export function Historico() {
     return () => {
       ignore = true;
     };
-  }, [reloadKey]);
+  }, [filter, period, reloadKey]);
+
+  const changeFilter = (next: HistoryFilter) => {
+    if (next === filter) return;
+    setStatus("loading");
+    setLoadError(null);
+    setFilter(next);
+  };
+
+  const changePeriod = (next: Period) => {
+    setStatus("loading");
+    setLoadError(null);
+    setPeriod(next);
+  };
 
   const retry = () => {
     setStatus("loading");
@@ -104,7 +180,8 @@ export function Historico() {
     setLoadingMore(true);
     try {
       const page = await historyService.list({
-        type: "all",
+        type: filter,
+        from: periodStart(period),
         limit: PAGE_SIZE,
         offset: events.length,
       });
@@ -117,6 +194,8 @@ export function Historico() {
       setLoadingMore(false);
     }
   };
+
+  const empty = emptyState(filter);
 
   return (
     <div className="space-y-6">
@@ -153,7 +232,35 @@ export function Historico() {
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-heading">Eventos</h2>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold text-heading">Eventos</h2>
+          <SelectField
+            aria-label="Escolher o período"
+            value={period}
+            onChange={(e) => changePeriod(e.target.value as Period)}
+            disabled={loadingMore}
+            containerClassName="w-full sm:w-52"
+          >
+            {PERIODS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </SelectField>
+        </div>
+
+        <div role="group" aria-label="Filtrar eventos" className="flex flex-wrap gap-2">
+          {FILTERS.map(({ value, label }) => (
+            <Chip
+              key={value}
+              active={filter === value}
+              onClick={() => changeFilter(value)}
+              disabled={loadingMore}
+            >
+              {label}
+            </Chip>
+          ))}
+        </div>
 
         {status === "loading" && (
           <div className="rounded-card border border-surface-border bg-surface/60 p-10 text-center text-muted">
@@ -179,11 +286,9 @@ export function Historico() {
         {status === "ready" &&
           (events.length === 0 ? (
             <div className="flex flex-col items-center rounded-card border border-dashed border-surface-border bg-surface/60 p-10 text-center">
-              <IconBadge icon={History} size="lg" />
-              <p className="mt-4 font-semibold text-heading">Nenhum registro por aqui</p>
-              <p className="mt-1 max-w-sm text-sm text-muted">
-                As doses confirmadas e os alarmes vão aparecer nesta lista.
-              </p>
+              <IconBadge icon={filter === "sos" ? Siren : History} size="lg" />
+              <p className="mt-4 font-semibold text-heading">{empty.title}</p>
+              <p className="mt-1 max-w-sm text-sm text-muted">{empty.text}</p>
             </div>
           ) : (
             <>
