@@ -12,6 +12,7 @@ import { EditarMedicamento } from "./app/pages/EditarMedicamento";
 import { CadastrarMedicacao } from "./app/pages/CadastrarMedicacao";
 import { QuandoTomar } from "./app/pages/QuandoTomar";
 import { Lembretes } from "./app/pages/Lembretes";
+import { Historico } from "./app/pages/Historico";
 import { Configuracoes } from "./app/pages/Configuracoes";
 import { BoasVindas } from "./app/pages/BoasVindas";
 import { Entrar } from "./app/pages/Entrar";
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="cadastrar" element={<CadastrarMedicacao />} />
             <Route path="cadastrar/quando-tomar" element={<QuandoTomar />} />
             <Route path="lembretes" element={<Lembretes />} />
+            <Route path="historico" element={<Historico />} />
             <Route path="configuracoes" element={<Configuracoes />} />
           </Route>
         </Route>
