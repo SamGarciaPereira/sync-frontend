@@ -56,4 +56,21 @@ export const historyService = {
     });
     return res.data;
   },
+
+  /** Downloads the PDF report for the given filter and period. */
+  async downloadReport({ type, from }: Pick<HistoryParams, "type" | "from">) {
+    const res = await api.get<Blob>("/history/report", {
+      params: { type, from: from?.toISOString() },
+      responseType: "blob",
+    });
+
+    const url = URL.createObjectURL(res.data);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `historico-sync-${new Date().toISOString().slice(0, 10)}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  },
 };

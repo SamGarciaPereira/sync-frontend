@@ -4,6 +4,7 @@ import {
   AlarmClock,
   CalendarCheck,
   Check,
+  FileDown,
   History,
   Loader2,
   RotateCcw,
@@ -133,6 +134,8 @@ export function Historico() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -195,16 +198,47 @@ export function Historico() {
     }
   };
 
+  const downloadReport = async () => {
+    setDownloading(true);
+    setDownloadError(null);
+    try {
+      await historyService.downloadReport({ type: filter, from: periodStart(period) });
+    } catch {
+      setDownloadError("Não foi possível gerar o relatório em PDF. Tente novamente.");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const empty = emptyState(filter);
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight text-heading sm:text-3xl">Histórico</h1>
-        <p className="mt-1.5 text-muted">
-          Acompanhe as doses tomadas, os alarmes e os medicamentos já terminados.
-        </p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-heading sm:text-3xl">Histórico</h1>
+          <p className="mt-1.5 text-muted">
+            Acompanhe as doses tomadas, os alarmes e os medicamentos já terminados.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          className="shrink-0"
+          onClick={downloadReport}
+          disabled={downloading}
+          leftIcon={
+            downloading ? <Loader2 size={18} className="animate-spin" /> : <FileDown size={18} />
+          }
+        >
+          {downloading ? "Gerando PDF..." : "Baixar PDF"}
+        </Button>
       </header>
+
+      {downloadError && (
+        <p role="alert" className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
+          {downloadError}
+        </p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <SummaryCard
