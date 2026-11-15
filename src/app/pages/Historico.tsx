@@ -55,14 +55,20 @@ function periodStart(period: Period): Date | undefined {
   return start;
 }
 
+/** "Aviso enviado a 2 de 3 contatos" — result of the SOS WhatsApp alert. */
+function sosDetail(item: { recipientsCount: number | null; sentCount: number | null }) {
+  if (item.recipientsCount === null || item.sentCount === null) return null;
+  const contacts = item.recipientsCount === 1 ? "contato" : "contatos";
+  return `Aviso enviado a ${item.sentCount} de ${item.recipientsCount} ${contacts}`;
+}
+
 /** Empty-state text for each filter. */
 function emptyState(filter: HistoryFilter): { title: string; text: string } {
   switch (filter) {
     case "sos":
-      // TODO(SOS): trocar pelo texto padrão quando o botão SOS estiver pronto.
       return {
-        title: "Botão SOS em desenvolvimento",
-        text: "As ligações de emergência vão aparecer aqui quando o botão SOS estiver disponível.",
+        title: "Nenhum pedido de ajuda",
+        text: "Os acionamentos do botão SOS neste período aparecem aqui.",
       };
     case "finished":
       return {
@@ -82,7 +88,7 @@ function emptyState(filter: HistoryFilter): { title: string; text: string } {
     default:
       return {
         title: "Nenhum registro por aqui",
-        text: "As doses confirmadas e os alarmes deste período vão aparecer nesta lista.",
+        text: "As doses, os alarmes e os pedidos de ajuda deste período vão aparecer nesta lista.",
       };
   }
 }
@@ -112,7 +118,11 @@ function describeEvent(event: HistoryEvent): { icon: LucideIcon; title: string; 
     case "ALARM":
       return { icon: AlarmClock, title: "Alarme disparado", detail: join(name, reminder) };
     case "SOS_CALL":
-      return { icon: Siren, title: "Ligação SOS", detail: "Ligação de emergência realizada." };
+      return {
+        icon: Siren,
+        title: "Pedido de ajuda (SOS)",
+        detail: sosDetail(event) ?? "Botão SOS acionado.",
+      };
     case "MEDICATION_FINISHED":
       return event.finishedReason === "REMOVED"
         ? { icon: Trash2, title: "Medicamento removido", detail: join(name, event.dosageLabel) }
@@ -218,7 +228,8 @@ export function Historico() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-heading sm:text-3xl">Histórico</h1>
           <p className="mt-1.5 text-muted">
-            Acompanhe as doses tomadas, os alarmes e os medicamentos já terminados.
+            Acompanhe as doses tomadas, os alarmes, os pedidos de ajuda e os medicamentos já
+            terminados.
           </p>
         </div>
         <Button
@@ -253,15 +264,11 @@ export function Historico() {
           item={summary?.lastAlarm}
           loading={status === "loading" && !summary}
         />
-        {/* TODO(SOS): o botão SOS ainda está em desenvolvimento. Quando ele passar a
-            registrar as ligações na API, `lastSos` vem preenchido e o aviso some. */}
         <SummaryCard
           icon={Siren}
-          title="Última ligação SOS"
+          title="Último SOS"
           item={summary?.lastSos}
           loading={status === "loading" && !summary}
-          emptyTitle="Em breve"
-          emptyText="O botão SOS ainda está em desenvolvimento."
         />
       </div>
 
@@ -358,16 +365,14 @@ function SummaryCard({
   title,
   item,
   loading,
-  emptyTitle = "Nenhum registro",
-  emptyText,
 }: {
   icon: LucideIcon;
   title: string;
   item: HistorySummaryItem | null | undefined;
   loading: boolean;
-  emptyTitle?: string;
-  emptyText?: string;
 }) {
+  const detail = item ? (item.medicationName ?? sosDetail(item)) : null;
+
   return (
     <Card icon={icon} title={title}>
       {loading ? (
@@ -375,15 +380,10 @@ function SummaryCard({
       ) : item ? (
         <>
           <p className="text-lg font-bold text-heading">{formatWhen(item.occurredAt)}</p>
-          {item.medicationName && (
-            <p className="truncate text-sm text-muted">{item.medicationName}</p>
-          )}
+          {detail && <p className="text-sm text-muted">{detail}</p>}
         </>
       ) : (
-        <>
-          <p className="text-lg font-bold text-heading">{emptyTitle}</p>
-          {emptyText && <p className="text-sm text-muted">{emptyText}</p>}
-        </>
+        <p className="text-lg font-bold text-heading">Nenhum registro</p>
       )}
     </Card>
   );
