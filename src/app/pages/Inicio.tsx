@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { CalendarClock, ChevronRight, ListChecks, Pill } from "lucide-react";
 import { Card } from "../components/Card";
 import { IconBadge } from "../components/IconBadge";
+import { SosButton } from "../components/SosButton";
+import { SosModal } from "../components/SosModal";
 import { WEEK_DAYS, findNextDose } from "../lib/medicationOptions";
 import { medicationService, type Medication } from "../../services/medications";
 import { useAuth } from "../auth/authContext";
@@ -19,6 +21,7 @@ export function Inicio() {
   const firstName = user?.name.trim().split(/\s+/)[0];
   const [medications, setMedications] = useState<Medication[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const [sosOpen, setSosOpen] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -46,6 +49,13 @@ export function Inicio() {
         </h1>
         <p className="mt-1.5 text-muted">Acompanhe seus medicamentos e as doses de hoje.</p>
       </header>
+
+      <section aria-label="Emergência">
+        <SosButton onClick={() => setSosOpen(true)} />
+        <p className="mt-2 text-center text-sm text-muted">
+          Em uma emergência, avise seus contatos com um toque.
+        </p>
+      </section>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card icon={Pill} title="Medicamentos">
@@ -89,6 +99,8 @@ export function Inicio() {
           description="Veja e gerencie o que já está cadastrado."
         />
       </section>
+
+      {sosOpen && <SosModal onClose={() => setSosOpen(false)} />}
     </div>
   );
 }

@@ -1,5 +1,12 @@
 import type { LucideIcon } from "lucide-react";
-import { House, Pill, ListChecks, CalendarDays, Settings } from "lucide-react";
+import {
+  House,
+  Pill,
+  ListChecks,
+  CalendarDays,
+  Settings,
+  Siren,
+} from "lucide-react";
 
 export interface NavItem {
   label: string;
@@ -18,6 +25,7 @@ export const navItems: NavItem[] = [
   { label: "Cadastrar medicação", shortLabel: "Cadastrar", path: "/app/cadastrar", icon: Pill, bottom: true },
   { label: "Meus medicamentos", shortLabel: "Meus medicamentos", path: "/app/medicamentos", icon: ListChecks, bottom: true },
   { label: "Lembretes", shortLabel: "Lembretes", path: "/app/lembretes", icon: CalendarDays, bottom: true },
+  { label: "Contatos de emergência", shortLabel: "Emergência", path: "/app/contatos", icon: Siren },
   { label: "Configurações", shortLabel: "Configurações", path: "/app/configuracoes", icon: Settings },
 ];
 
