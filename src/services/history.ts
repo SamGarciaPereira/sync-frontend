@@ -18,18 +18,23 @@ export interface HistoryEvent {
   scheduledTime: string | null; // "HH:mm"
   /** Only for MEDICATION_FINISHED: treatment ended or removed by the user. */
   finishedReason: "COMPLETED" | "REMOVED" | null;
+  /** Only for SOS_CALL: emergency contacts at the time and how many were warned. */
+  recipientsCount: number | null;
+  sentCount: number | null;
 }
 
 export interface HistorySummaryItem {
   occurredAt: string;
   medicationName: string | null;
   scheduledTime: string | null;
+  recipientsCount: number | null;
+  sentCount: number | null;
 }
 
 export interface HistorySummary {
   lastDose: HistorySummaryItem | null;
   lastAlarm: HistorySummaryItem | null;
-  /** Always null until the SOS button exists and starts recording calls. */
+  /** Last time the SOS button was used. */
   lastSos: HistorySummaryItem | null;
 }
 
