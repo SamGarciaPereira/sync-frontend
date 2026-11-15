@@ -14,6 +14,7 @@ import { QuandoTomar } from "./app/pages/QuandoTomar";
 import { Lembretes } from "./app/pages/Lembretes";
 import { Historico } from "./app/pages/Historico";
 import { Configuracoes } from "./app/pages/Configuracoes";
+import { ContatosEmergencia } from "./app/pages/ContatosEmergencia";
 import { BoasVindas } from "./app/pages/BoasVindas";
 import { Entrar } from "./app/pages/Entrar";
 import { Cadastro } from "./app/pages/Cadastro";
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="cadastrar" element={<CadastrarMedicacao />} />
             <Route path="cadastrar/quando-tomar" element={<QuandoTomar />} />
             <Route path="lembretes" element={<Lembretes />} />
+            <Route path="contatos" element={<ContatosEmergencia />} />
             <Route path="historico" element={<Historico />} />
             <Route path="configuracoes" element={<Configuracoes />} />
           </Route>
