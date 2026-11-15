@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarClock, ChevronRight, ListChecks, Pill } from "lucide-react";
+import { CalendarClock, ChevronRight, History, ListChecks, Pill } from "lucide-react";
 import { Card } from "../components/Card";
 import { IconBadge } from "../components/IconBadge";
 import { SosButton } from "../components/SosButton";
@@ -97,6 +97,12 @@ export function Inicio() {
           icon={ListChecks}
           title="Meus medicamentos"
           description="Veja e gerencie o que já está cadastrado."
+        />
+        <QuickAction
+          to="/app/historico"
+          icon={History}
+          title="Histórico"
+          description="Doses tomadas, alarmes e relatório em PDF."
         />
       </section>
 

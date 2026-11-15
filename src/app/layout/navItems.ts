@@ -5,6 +5,7 @@ import {
   ListChecks,
   CalendarDays,
   Settings,
+  History,
   Siren,
 } from "lucide-react";
 
@@ -26,6 +27,7 @@ export const navItems: NavItem[] = [
   { label: "Meus medicamentos", shortLabel: "Meus medicamentos", path: "/app/medicamentos", icon: ListChecks, bottom: true },
   { label: "Lembretes", shortLabel: "Lembretes", path: "/app/lembretes", icon: CalendarDays, bottom: true },
   { label: "Contatos de emergência", shortLabel: "Emergência", path: "/app/contatos", icon: Siren },
+  { label: "Histórico", shortLabel: "Histórico", path: "/app/historico", icon: History },
   { label: "Configurações", shortLabel: "Configurações", path: "/app/configuracoes", icon: Settings },
 ];
 
